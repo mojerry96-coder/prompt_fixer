@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Fix the Prompt</title>
+  <meta name="description" content="Module 2 — AI Literacy for Teaching and Research · Unit 2.2 · Fix the Prompt simulation" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Afacad:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Phosphor Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/bold/style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
+
+  <link rel="stylesheet" href="styles.css?v=5" />
+  <link rel="stylesheet" href="intro.css?v=5" />
+</head>
+<body>
+  <div class="bg" aria-hidden="true"></div>
+
+  <div class="app">
+    <header class="topbar">
+      <span class="brand"><img src="assets/miva-mark.png" alt="" /><span class="sr-only">Fix the Prompt</span></span>
+      <span class="topbar-right">
+        <span class="stage-label" id="stage-label" aria-live="polite"></span>
+        <button type="button" class="icon-btn" id="replay-walkthrough" aria-label="Watch how it works"><i class="ph ph-play-circle" aria-hidden="true"></i></button>
+      </span>
+    </header>
+
+    <main class="thread" id="thread" aria-label="Conversation">
+      <div class="thread-inner" id="thread-inner"></div>
+    </main>
+
+    <footer class="dock" id="dock" aria-label="Your turn"></footer>
+  </div>
+
+  <div id="live" class="sr-only" aria-live="polite"></div>
+
+  <!-- ============ OPENER ============ -->
+  <div id="intro" class="intro" role="dialog" aria-modal="true" aria-label="Fix the Prompt">
+    <div class="intro-inner">
+      <img class="intro-logo" src="assets/miva-logo-blue.png" alt="MIVA Open University" />
+      <div class="intro-rule" aria-hidden="true"></div>
+      <h1 class="intro-title">Fix the Prompt</h1>
+      <p class="intro-sub">AI Literacy · Unit 2.2</p>
+      <button class="primary-cta intro-begin" type="button">Begin <i class="ph-bold ph-arrow-right" aria-hidden="true"></i></button>
+    </div>
+    <button class="intro-skip" type="button">Skip <kbd>Esc</kbd></button>
+  </div>
+
+  <script src="evaluator.js?v=5"></script>
+  <script src="replies.js?v=5"></script>
+  <script src="characters.js?v=5"></script>
+  <script src="walkthrough.js?v=5"></script>
+  <script src="app.js?v=5"></script>
+  <script src="intro.js?v=5"></script>
+</body>
+</html>

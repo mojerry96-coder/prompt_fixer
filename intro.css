@@ -1,0 +1,59 @@
+/* ==========================================================
+   OPENER — minimal: logo, title, begin
+   ========================================================== */
+.intro {
+  position: fixed; inset: 0; z-index: 100;
+  display: grid; place-items: center;
+  padding: 24px;
+  background: var(--gradient-light-page);
+  transition: opacity 600ms var(--ease);
+}
+.intro.out { opacity: 0; pointer-events: none; }
+.intro.gone { display: none; }
+
+.intro-inner { display: grid; justify-items: center; text-align: center; }
+
+.intro-logo {
+  width: min(260px, 60vw); height: auto;
+  opacity: 0; transform: translateY(8px); filter: blur(6px);
+  transition: opacity 1000ms var(--ease), transform 1200ms var(--ease), filter 1000ms var(--ease);
+}
+.intro-rule {
+  width: 56px; height: 2px; margin: 36px 0 30px; border-radius: 2px;
+  background: var(--accent);
+  transform: scaleX(0); transition: transform 700ms var(--ease);
+}
+.intro-title {
+  font-family: var(--font-display); font-weight: 650;
+  font-size: clamp(44px, 7vw, 76px); line-height: 1; letter-spacing: -0.04em;
+  color: var(--text-dark);
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 800ms var(--ease), transform 900ms var(--ease);
+}
+.intro-sub {
+  margin-top: 14px; font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text-soft);
+  opacity: 0; transition: opacity 800ms var(--ease);
+}
+.intro-begin {
+  margin-top: 44px;
+  opacity: 0; transform: translateY(8px); pointer-events: none;
+  transition: opacity 700ms var(--ease), transform 700ms var(--ease), background 200ms var(--ease);
+}
+
+.intro.st-logo .intro-logo { opacity: 1; transform: none; filter: none; }
+.intro.st-title .intro-rule { transform: scaleX(1); }
+.intro.st-title .intro-title { opacity: 1; transform: none; }
+.intro.st-title .intro-sub { opacity: 1; transition-delay: 200ms; }
+.intro.st-begin .intro-begin { opacity: 1; transform: none; pointer-events: auto; }
+
+.intro-skip {
+  position: absolute; right: 24px; bottom: max(24px, env(safe-area-inset-bottom));
+  display: inline-flex; align-items: center; gap: 10px;
+  min-height: 44px; padding: 0 16px; border-radius: 999px;
+  border: 1px solid var(--line-light); background: transparent;
+  color: var(--text-soft); font-size: 14px; font-weight: 600; cursor: pointer;
+  transition: opacity 300ms var(--ease);
+}
+.intro-skip:hover { color: var(--text-dark); }
+.intro.st-begin .intro-skip { opacity: 0; pointer-events: none; }

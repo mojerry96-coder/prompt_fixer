@@ -1,0 +1,9 @@
+.DS_Store
+
+# Earlier multi-page build and retired assets, kept locally for reference
+legacy/
+
+# Raw Higgsfield outputs (~23 MB). Only needed to re-key the character clips with assets/cast/key.py
+assets/cast/src/
+
+__pycache__/
