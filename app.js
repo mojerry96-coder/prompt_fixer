@@ -48,6 +48,7 @@
       stage: "intro",
       gap: { context: null, task: null, format: null },
       attempts: [],
+      asides: [],   // messages that were not a rewrite: questions, chat, off-task requests
       reviseDraft: ORIGINAL_P1,
       cold: null,
       coldDraft: "",
@@ -109,6 +110,18 @@
   /* ==========================================================
      THREAD — derived entirely from state
      ========================================================== */
+  /** Off-task exchanges sit between the attempts they were sent between. */
+  function asidesAt(phase, after) {
+    const list = [];
+    state.asides.forEach((a, n) => {
+      if (a.phase !== phase || a.after !== after) return;
+      list.push({ id: `as-${n}-user`, kind: "user", meta: "You", text: a.prompt });
+      list.push({ id: `as-${n}-ai`, kind: "ai", tested: true, aside: true,
+        html: `<p class="r-lead">${esc(a.message)}</p>` });
+    });
+    return list;
+  }
+
   function items() {
     const list = [
       { id: "step-1", kind: "step", art: window.Characters.clip("tade-puzzled"), eyebrow: "The problem", text: "You’ve seen this prompt fail before. This time, you’re the one fixing it." },
@@ -122,12 +135,16 @@
     }
 
     state.attempts.forEach((a, i) => {
+      list.push(...asidesAt("revise", i));
       list.push({ id: `rev-${i}-user`, kind: "user", meta: "Your fix", text: a.prompt });
       list.push({ id: `rev-${i}-ai`, kind: "ai", tested: true, tier: a.tier, note: TIER[a.tier].sub,
         html: R.lesson(a.prompt, a.tier, a.check), after: chips(a.check) });
     });
 
+    if (at("revise")) list.push(...asidesAt("revise", state.attempts.length));
+
     if (at("cold")) {
+      list.push(...asidesAt("cold", 0));
       list.push({ id: "step-3", kind: "step", eyebrow: "New prompt", text: "Now fix this one on your own. One try, no hints." });
       list.push({ id: "p2-user", kind: "user", meta: "The prompt", text: ORIGINAL_P2 });
       list.push({ id: "p2-ai", kind: "ai", html: R.GENERIC_EXAM, faded: !!state.cold });
@@ -157,7 +174,7 @@
         <div class="ai-body">
           ${item.tested ? `<div class="think-art">${window.Characters.clip("sage-think")}<p class="think-line" data-think>${anyOf(WORKING_FIRST)}</p></div>` : ""}
           ${item.tier ? `<div class="ai-head">${tierBadge(item.tier)}${item.note ? `<span class="ai-note">${item.note}</span>` : ""}</div>` : ""}
-          <div class="reply">${item.html}</div>
+          <div class="reply${item.aside ? " reply-aside" : ""}">${item.html}</div>
           ${item.after || ""}
         </div>`;
     } else if (item.kind === "step") {
@@ -409,6 +426,7 @@
       }),
       bind: (d) => bindComposer(d, (v) => (state.reviseDraft = v), (prompt) => {
         if (busy || state.attempts.length >= MAX_ATTEMPTS || !prompt) return;
+        if (sendAside(prompt, "revise", { job: "lesson", original: ORIGINAL_P1 }, () => (state.reviseDraft = ""))) return;
         const { check, tier } = E.evaluatePrompt(prompt);
         state.attempts.push({ prompt, tier, check });
         const done = tier === "strong" || state.attempts.length >= MAX_ATTEMPTS;
@@ -433,6 +451,7 @@
       }),
       bind: (d) => bindComposer(d, (v) => (state.coldDraft = v), (prompt) => {
         if (busy || state.cold || !prompt) return;
+        if (sendAside(prompt, "cold", { job: "exam", original: ORIGINAL_P2 }, () => (state.coldDraft = ""))) return;
         const { check, tier } = E.evaluatePrompt(prompt);
         state.cold = { prompt, tier, check };
         save();
@@ -471,6 +490,26 @@
       })
     }
   };
+
+  /**
+   * If the message is not a rewrite, answer it and keep the attempt.
+   * Returns true when it was handled as an aside.
+   */
+  function sendAside(prompt, phase, opts, clearDraft) {
+    const verdict = window.Intent && window.Intent.check(prompt, opts);
+    if (!verdict) return false;
+    state.asides.push({
+      prompt, phase, kind: verdict.kind, message: verdict.message,
+      after: phase === "revise" ? state.attempts.length : 0
+    });
+    clearDraft();
+    save();
+    syncThread(true).then(() => {
+      announce(verdict.message);
+      renderDock();
+    });
+    return true;
+  }
 
   function setStage(stage) {
     state.stage = stage;

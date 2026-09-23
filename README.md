@@ -18,7 +18,7 @@ Then open <http://localhost:5391>. Add `?reset` to the URL to clear saved progre
 2. **Loading screen**, then a **walkthrough** of about 55 seconds. It plays the real interface by itself with captions and a Nigerian English voiceover. It uses a different example ("Plan a meeting about exam timetables.") so it never gives away the lesson-plan answers. The learner can skip it or replay it from the top bar.
 3. **The problem:** "Write a lesson plan." and its generic result.
 4. **Diagnose:** Yes / No for who it's for, what exactly, and what shape. After Confirm, the answers are revealed.
-5. **Revise and test:** up to three tries, each graded **Weak**, **Getting there** or **Strong**.
+5. **Revise and test:** up to three tries, each graded **Weak**, **Getting there** or **Strong**. Anything that is not a rewrite — "help me", "hi", the original prompt unchanged, or a request for an email or exam questions — is answered without spending a try.
 6. **Fix it cold:** "Give me exam questions.", with one try and no hints.
 7. **Before and after:** the three prompts side by side, the three result strands, and the closing line.
 
@@ -30,6 +30,7 @@ Progress is saved in the browser's `localStorage`, so a learner who reloads carr
 | --- | --- |
 | `index.html` | Page shell. Bump `?v=` on the asset links after changing files, so browsers don't serve stale copies. |
 | `app.js` | The simulation: one state object, with the conversation built from it. |
+| `intent.js` | Reads what the learner sent before it is graded. A greeting, a question to the assistant, the untouched original, gibberish, or a request for something else gets answered in character and does not use up a try. |
 | `evaluator.js` | Rule-based grader. It checks for context, task and format (no live AI) and returns Weak, Getting there or Strong. |
 | `replies.js` | The simulated AI replies for each tier, each opening with a line in the assistant's own voice ("Here's the 40-minute photosynthesis plan you asked for."). A Strong prompt gets a short lesson plan whose shape and activities come from the prompt's own subject, so no two topics get the same plan. |
 | `walkthrough.js` | Loading screen and the scripted walkthrough. |

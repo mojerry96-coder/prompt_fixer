@@ -610,3 +610,7 @@ p { margin: 0; }
 .reply .r-lead + .r-title { margin-top: 0; }
 .wt-think { display: flex; align-items: center; gap: 14px; }
 .wt-think .cast { width: 90px; flex: none; }
+
+/* An answer to something that was not a rewrite: quieter than a result */
+.reply-aside { background: transparent; border-style: dashed; }
+.reply-aside .r-lead { margin-bottom: 0; color: var(--text-dark); }
