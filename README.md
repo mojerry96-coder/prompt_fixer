@@ -42,6 +42,8 @@ Progress is saved in the browser's `localStorage`, so a learner who reloads carr
 | `assets/vo/` | Walkthrough voiceover, `vo1`–`vo6`. |
 | `assets/logos/` | Partner logos used by the opener. |
 
+The opening sequence has its own specification in [docs/OPENER.md](docs/OPENER.md): timings, the movement rule, the background motif, and a sign-off checklist.
+
 ## Brand
 
 Colours, type treatment and the opener furniture follow the Miva Campus brand deck:
