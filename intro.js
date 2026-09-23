@@ -14,22 +14,27 @@
   const params = new URLSearchParams(location.search);
   const timers = [];
   let finished = false;
+  let shownCount = 1;
 
   const at = (ms, fn) => timers.push(setTimeout(fn, ms));
 
-  /** Offset that parks a logo at the centre of the row until it settles. */
-  function measure() {
-    // Layout positions only — getBoundingClientRect would include the entry scale
-    const mid = row.offsetLeft + row.offsetWidth / 2;
-    logos.forEach((el) => {
-      if (el.classList.contains("set")) return;
-      el.style.setProperty("--cx", `${mid - (el.offsetLeft + el.offsetWidth / 2)}px`);
-    });
+  /**
+   * Slide the row so the logos that have arrived sit centred on screen.
+   * Layout positions only — getBoundingClientRect would include the entry scale.
+   */
+  function centreOn(count) {
+    const shown = logos.slice(0, Math.max(count, 1));
+    const first = shown[0];
+    const last = shown[shown.length - 1];
+    const mid = (first.offsetLeft + last.offsetLeft + last.offsetWidth) / 2;
+    const rowMid = row.offsetLeft + row.offsetWidth / 2;
+    row.style.setProperty("--shift", `${rowMid - mid}px`);
   }
 
   function showBegin() {
     timers.forEach(clearTimeout);
     logos.forEach((el) => el.classList.add("in", "set"));
+    centreOn(logos.length);
     intro.classList.add("st-line", "st-title", "st-begin");
     beginBtn.focus({ preventScroll: true });
   }
@@ -50,7 +55,7 @@
     e.preventDefault();
     showBegin();
   });
-  window.addEventListener("resize", measure);
+  window.addEventListener("resize", () => centreOn(shownCount));
 
   // Dev link, or returning mid-session: bypass the opener entirely
   const resumed = window.FixThePrompt && window.FixThePrompt.resumed;
@@ -65,10 +70,14 @@
   // One logo at a time: arrive at the centre, hold, then slide into its slot.
   function play() {
     if (finished) return;
-    measure();
-    const ENTER = 350, GAP = 1050, HOLD = 800;
+    centreOn(1);
+    const ENTER = 350, GAP = 1000, HOLD = 700;
     logos.forEach((el, i) => {
-      at(ENTER + i * GAP, () => { measure(); el.classList.add("in"); });
+      at(ENTER + i * GAP, () => {
+        shownCount = i + 1;
+        centreOn(shownCount);      // the row slides; the newcomer fades in beside it
+        el.classList.add("in");
+      });
       at(ENTER + i * GAP + HOLD, () => el.classList.add("set"));
     });
     const settled = ENTER + (logos.length - 1) * GAP + HOLD;
