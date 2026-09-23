@@ -505,7 +505,6 @@ p { margin: 0; }
 
 .step-art { width: 96px; margin: 0 0 8px -6px; }
 .summary-art { width: min(320px, 100%); margin: -4px 0 16px; }
-.think-art { display: none; width: 88px; }
 .msg-ai.thinking .ai-body > :not(.think-art) { display: none; }
 .msg-ai.thinking .ai-body::before { content: none; }
 .msg-ai.thinking .think-art { display: block; }
@@ -573,7 +572,6 @@ p { margin: 0; }
 .wt-later { display: none; }
 .wt-later.shown { display: flex; animation: rise 460ms var(--ease) both; }
 .gone { display: none !important; }
-.wt-think { width: 90px; }
 .wt-composer { border-radius: 18px; border: 1px solid var(--accent); background: #fff; box-shadow: 0 0 0 4px rgba(29, 91, 214, 0.12); }
 .wt-composer textarea { pointer-events: none; }
 .wt-panel { width: 100%; }
@@ -601,3 +599,14 @@ p { margin: 0; }
   .wt-host { width: 56px; }
   .step-art { width: 80px; }
 }
+
+/* The assistant's own voice: a working line, then a lead-in above the result */
+.think-art { display: none; align-items: center; gap: 14px; }
+.msg-ai.thinking .think-art { display: flex; }
+.think-art .cast { width: 88px; flex: none; }
+.think-line { font-size: 15px; color: var(--text-soft); animation: pulse-soft 1.6s ease-in-out infinite; }
+@keyframes pulse-soft { 50% { opacity: 0.55; } }
+.r-lead { font-size: 16px; line-height: 1.5; color: var(--text-mid); margin-bottom: 14px; }
+.reply .r-lead + .r-title { margin-top: 0; }
+.wt-think { display: flex; align-items: center; gap: 14px; }
+.wt-think .cast { width: 90px; flex: none; }

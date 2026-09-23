@@ -20,6 +20,49 @@
     };
   }
 
+  /* ---- What the assistant says as it hands the work back ----------------
+     One short line above the result, written from the learner's own prompt.
+     Picked from the prompt's hash so a reply never changes under the learner. */
+  const lead = (text) => `<p class="r-lead">${text}</p>`;
+
+  const LEADS = {
+    lessonStrong: [
+      (x) => `Here's the ${x.t} plan you asked for${x.len ? `, set out over ${x.len}` : ""}.`,
+      (x) => `Here's a${x.adj ? ` ${x.adj}` : ""} lesson on ${x.t}${x.aud ? ` for ${x.aud}` : ""}.`,
+      (x) => `Here's your ${x.t} lesson${x.len ? `, timed to ${x.len}` : ""} — ready to use.`
+    ],
+    lessonMid: [
+      () => `Here's a lesson plan based on your prompt.`,
+      () => `Here's what I could put together from that.`,
+      () => `Here's a first draft from your prompt.`
+    ],
+    lessonWeak: [
+      () => `Here's a lesson plan you can adapt to your needs.`,
+      () => `Sure — here's a general lesson plan to work from.`,
+      () => `Here's a lesson plan. You can shape it to your class.`
+    ],
+    examStrong: [
+      (x) => `Here are the ${x.n} questions on ${x.t} you asked for, with marks.`,
+      (x) => `Here's a ${x.n}-question paper on ${x.t}${x.aud ? ` for ${x.aud}` : ""}.`,
+      (x) => `Here are your ${x.n} questions on ${x.t}, marks included.`
+    ],
+    examMid: [
+      () => `Here are some questions based on your prompt.`,
+      () => `Here's what I could put together from that.`,
+      () => `Here's a first set of questions from your prompt.`
+    ],
+    examWeak: [
+      () => `Here are some exam questions you can use.`,
+      () => `Sure — here are some questions to start from.`,
+      () => `Here are a few exam questions you can adapt.`
+    ]
+  };
+
+  function leadFor(bank, prompt, parts) {
+    const bankArr = LEADS[bank];
+    return lead(bankArr[hash(prompt) % bankArr.length](parts || {}));
+  }
+
   const heading = (title, sub, missing) => `
     <h3 class="r-title">${title}</h3>
     ${sub ? `<p class="r-sub${missing ? " r-missing" : ""}">${sub}</p>` : ""}`;
@@ -32,7 +75,7 @@
   /* ---------------- Lesson plan (the starting prompt) ---------------- */
   // Kept short on purpose: a glance should show it's generic, not a wall of prose.
   const row = (tone, icon, b, t) => `<li><span class="ic ic-${tone}" aria-hidden="true"><i class="ph ${icon}"></i></span><b>${b}</b><span>${t}</span></li>`;
-  const GENERIC_LESSON = `
+  const GENERIC_LESSON_BODY = `
     <h3 class="r-title">Lesson Plan</h3>
     <ul class="r-rows">
       ${row("blue", "ph-target", "Objectives", "Understand the key concepts")}
@@ -40,6 +83,8 @@
       ${row("violet", "ph-chart-bar", "Assessment", "Questions or a quiz")}
       ${row("blue", "ph-book-open", "Resources", "Textbooks and slides")}
     </ul>`;
+
+  const GENERIC_LESSON = lead("Here is a lesson plan you can adapt to your needs.") + GENERIC_LESSON_BODY;
 
   /* ---- Strong lesson plans -------------------------------------------------
      Both the shape of the plan and its activities come from the prompt, so two
@@ -190,8 +235,8 @@
   }
 
   function lesson(prompt, tier, check) {
-    if (tier === "weak") return GENERIC_LESSON;
     const x = pick(prompt);
+    if (tier === "weak") return leadFor("lessonWeak", prompt) + GENERIC_LESSON_BODY;
 
     if (tier === "strong") {
       // Match on the subject itself — format words like "numbered" are not a subject
@@ -202,26 +247,35 @@
       const mins = total ? minutes(total, shape.weights) : null;
       const t = esc(x.topicLower);
       const title = `Lesson plan: ${esc(E.cap(x.topic) || "your topic")}${x.duration ? ` · ${esc(x.duration)}` : ""}`;
-      return heading(title, x.audience ? esc(E.cap(x.audience)) : "") + `
+      const dur = x.duration.match(/(\d+)\s*(minute|hour)/i);
+      const unit = dur ? dur[2].toLowerCase() : "";
+      return leadFor("lessonStrong", prompt, {
+        t,
+        adj: dur ? `${dur[1]}-${unit}` : "",                                  // "a 40-minute lesson"
+        len: dur ? `${dur[1]} ${unit}${dur[1] === "1" ? "" : "s"}` : "",      // "over 40 minutes"
+        aud: esc(lc(x.audience))
+      })
+        + heading(title, x.audience ? esc(E.cap(x.audience)) : "") + `
         <ol class="r-outline">
           ${shape.rows.map(([label, kind], i) => `<li><b>${label}${mins ? ` · ${mins[i]} min` : ""}</b><span>${fam[kind](t)}</span></li>`).join("")}
         </ol>`;
     }
 
     // getting-there: the reply shows which ingredient is still absent, without naming the rule
+    const mid = leadFor("lessonMid", prompt);
     if (!check.format) {
-      return heading(`Lesson plan${x.topic ? `: ${esc(E.cap(x.topic))}` : ""}`, x.audience ? esc(E.cap(x.audience)) : "") + `
+      return mid + heading(`Lesson plan${x.topic ? `: ${esc(E.cap(x.topic))}` : ""}`, x.audience ? esc(E.cap(x.audience)) : "") + `
         <p class="r-fade">Start with a discussion, explain the main ideas, then perhaps an activity of some kind…</p>`;
     }
     if (!check.context) {
-      return heading(`Lesson plan${x.topic ? `: ${esc(E.cap(x.topic))}` : ""}${x.duration ? ` · ${esc(x.duration)}` : ""}`, "Pitched at a general audience", true) + outline([
+      return mid + heading(`Lesson plan${x.topic ? `: ${esc(E.cap(x.topic))}` : ""}${x.duration ? ` · ${esc(x.duration)}` : ""}`, "Pitched at a general audience", true) + outline([
         ["Objectives", `Understand the basics of ${esc(x.topicLower)}.`],
         ["Introduction", "A general overview suitable for any learner."],
         ["Activity", "A discussion or worksheet."],
         ["Wrap-up", "Review the key points."]
       ], true);
     }
-    return heading(`Lesson plan${x.duration ? ` · ${esc(x.duration)}` : ""}`, x.audience ? esc(E.cap(x.audience)) : "") + outline([
+    return mid + heading(`Lesson plan${x.duration ? ` · ${esc(x.duration)}` : ""}`, x.audience ? esc(E.cap(x.audience)) : "") + outline([
       ["Objectives", "Topic not given, so objectives stay general."],
       ["Starter", "An icebreaker to engage the group."],
       ["Main activity", "Content to be decided."],
@@ -230,13 +284,15 @@
   }
 
   /* ---------------- Exam questions (the cold-transfer prompt) ---------------- */
-  const GENERIC_EXAM = `
+  const GENERIC_EXAM_BODY = `
     <h3 class="r-title">Exam Questions</h3>
     <ol class="r-plain faint">
       <li>Explain the main concepts of the topic.</li>
       <li>Discuss why this subject matters.</li>
       <li>Give examples to support your answer.</li>
     </ol>`;
+
+  const GENERIC_EXAM = lead("Here are some exam questions you can use.") + GENERIC_EXAM_BODY;
 
   const STRONG_QUESTIONS = [
     (t) => [`Define ${t} and explain, with one example, why it matters in practice.`, 4],
@@ -248,7 +304,7 @@
   ];
 
   function exam(prompt, tier, check) {
-    if (tier === "weak") return GENERIC_EXAM;
+    if (tier === "weak") return leadFor("examWeak", prompt) + GENERIC_EXAM_BODY;
     const x = pick(prompt);
     const n = Math.min(x.count || 5, STRONG_QUESTIONS.length);
     const t = esc(x.topicLower);
@@ -256,25 +312,27 @@
     if (tier === "strong") {
       const qs = STRONG_QUESTIONS.slice(0, n).map((f) => f(t));
       const total = qs.reduce((a, q) => a + q[1], 0);
-      return heading(`Exam questions: ${esc(E.cap(x.topic) || "your topic")}`, x.audience ? `${esc(E.cap(x.audience))} · ${total} marks` : `${total} marks`) + `
+      return leadFor("examStrong", prompt, { n, t, aud: esc(lc(x.audience)) })
+        + heading(`Exam questions: ${esc(E.cap(x.topic) || "your topic")}`, x.audience ? `${esc(E.cap(x.audience))} · ${total} marks` : `${total} marks`) + `
         <ol class="r-questions">
           ${qs.map(([q, m]) => `<li><span>${q}</span><em>${m} marks</em></li>`).join("")}
         </ol>`;
     }
 
+    const midX = leadFor("examMid", prompt);
     if (!check.format) {
-      return heading(`Exam questions${x.topic ? `: ${esc(E.cap(x.topic))}` : ""}`, x.audience ? esc(E.cap(x.audience)) : "") + `
+      return midX + heading(`Exam questions${x.topic ? `: ${esc(E.cap(x.topic))}` : ""}`, x.audience ? esc(E.cap(x.audience)) : "") + `
         <p class="r-fade">You could ask students to define ${t}, discuss why it matters, or apply it to a case…</p>`;
     }
     if (!check.context) {
-      return heading(`Exam questions${x.topic ? `: ${esc(E.cap(x.topic))}` : ""}`, "Level not specified", true) + `
+      return midX + heading(`Exam questions${x.topic ? `: ${esc(E.cap(x.topic))}` : ""}`, "Level not specified", true) + `
         <ol class="r-plain faint">
           <li>What is ${t}?</li>
           <li>List the main features of ${t}.</li>
           <li>Why is ${t} important?</li>
         </ol>`;
     }
-    return heading("Exam questions", x.audience ? esc(E.cap(x.audience)) : "") + `
+    return midX + heading("Exam questions", x.audience ? esc(E.cap(x.audience)) : "") + `
       <ol class="r-plain faint">
         <li>Explain a key concept from your course.</li>
         <li>Discuss a topic you have studied this term.</li>

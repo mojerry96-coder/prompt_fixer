@@ -37,6 +37,7 @@
 
   const GENERIC_AGENDA = `
     <div class="reply">
+      <p class="r-lead">Here is a meeting agenda you can adapt to your needs.</p>
       <h3 class="r-title">Meeting Agenda</h3>
       <ul class="r-rows">
         ${row("blue", "ph-users-three", "Welcome", "Introductions")}
@@ -49,6 +50,7 @@
   const STRONG_AGENDA = `
     <div class="ai-head"><span class="tier tier-strong"><i class="ph-fill ph-check-circle" aria-hidden="true"></i>Strong</span><span class="ai-note">Specific and ready to use.</span></div>
     <div class="reply">
+      <p class="r-lead">Here's the 30-minute agenda you asked for, for the Year 2 teaching team.</p>
       <h3 class="r-title">Exam timetables · 30 minutes</h3>
       <p class="r-sub">Year 2 teaching team</p>
       <ol class="r-outline">
@@ -119,7 +121,7 @@
           <div class="msg msg-user wt-later" data-show="sent"><span class="msg-meta">Your fix</span><div class="bubble">${DEMO_FIX}</div></div>
           <div class="msg msg-ai wt-later" data-show="thinking">
             ${avatar()}
-            <div class="ai-body"><div class="wt-think">${C.clip("sage-think")}</div></div>
+            <div class="ai-body"><div class="wt-think">${C.clip("sage-think")}<p class="think-line">Putting that together…</p></div></div>
           </div>
           <div class="msg msg-ai wt-later" data-show="reply">${avatar()}<div class="ai-body">${STRONG_AGENDA}</div></div>
           <div class="composer wt-composer" data-show="composer">

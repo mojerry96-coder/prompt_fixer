@@ -37,6 +37,11 @@
 
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  // What the assistant says while it works, in two beats
+  const WORKING_FIRST = ["Reading your prompt…", "Looking at what you've asked for…", "Taking that in…"];
+  const WORKING_THEN = ["Putting that together…", "Writing it up now…", "Drafting that for you…", "Pulling the plan together…"];
+  const anyOf = (list) => list[Math.floor(Math.random() * list.length)];
+
   /* ---------------- State ---------------- */
   function freshState() {
     return {
@@ -150,7 +155,7 @@
       el.innerHTML = `
         <span class="avatar" aria-hidden="true"><img src="assets/miva-mark.png" alt="" /></span>
         <div class="ai-body">
-          ${item.tested ? `<div class="think-art">${window.Characters.clip("sage-think")}<span class="sr-only">Thinking</span></div>` : ""}
+          ${item.tested ? `<div class="think-art">${window.Characters.clip("sage-think")}<p class="think-line" data-think>${anyOf(WORKING_FIRST)}</p></div>` : ""}
           ${item.tier ? `<div class="ai-head">${tierBadge(item.tier)}${item.note ? `<span class="ai-note">${item.note}</span>` : ""}</div>` : ""}
           <div class="reply">${item.html}</div>
           ${item.after || ""}
@@ -196,8 +201,16 @@
     renderDock();
     thinking.forEach(({ el }) => el.classList.add("thinking"));
     scrollToEnd(true);
+    // Second beat: "reading your prompt" gives way to "putting that together"
+    const beat = setTimeout(() => {
+      thinking.forEach(({ el }) => {
+        const line = el.querySelector("[data-think]");
+        if (line) line.textContent = anyOf(WORKING_THEN);
+      });
+    }, 850);
     return new Promise((resolve) => {
       setTimeout(() => {
+        clearTimeout(beat);
         thinking.forEach(({ el }) => { el.classList.remove("thinking"); el.classList.add("reveal"); });
         busy = false;
         scrollToEnd(true);

@@ -31,7 +31,7 @@ Progress is saved in the browser's `localStorage`, so a learner who reloads carr
 | `index.html` | Page shell. Bump `?v=` on the asset links after changing files, so browsers don't serve stale copies. |
 | `app.js` | The simulation: one state object, with the conversation built from it. |
 | `evaluator.js` | Rule-based grader. It checks for context, task and format (no live AI) and returns Weak, Getting there or Strong. |
-| `replies.js` | The simulated AI replies for each tier. A Strong prompt gets a short lesson plan whose shape and activities come from the prompt's own subject, so no two topics get the same plan. |
+| `replies.js` | The simulated AI replies for each tier, each opening with a line in the assistant's own voice ("Here's the 40-minute photosynthesis plan you asked for."). A Strong prompt gets a short lesson plan whose shape and activities come from the prompt's own subject, so no two topics get the same plan. |
 | `walkthrough.js` | Loading screen and the scripted walkthrough. |
 | `characters.js` | Inserts the character clips. |
 | `intro.js`, `intro.css` | The opener. |
