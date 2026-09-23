@@ -134,12 +134,12 @@ p { margin: 0; }
 .msg-ai { align-items: flex-start; transition: opacity 400ms var(--ease); }
 .msg-ai.faded { opacity: 0.55; }
 .avatar {
-  flex: none; width: 32px; height: 32px; margin-top: 2px;
-  display: grid; place-items: center; border-radius: 50%;
-  background: #fff; border: 1px solid var(--line-light);
-  box-shadow: 0 2px 8px rgba(9, 49, 79, 0.10);
+  flex: none; width: 36px; height: 36px; margin-top: 2px;
+  display: grid; place-items: center; border-radius: 50%; overflow: hidden;
+  background: var(--paper-050); border: 1px solid var(--line-light);
 }
-.avatar img { width: 18px; height: 18px; display: block; }
+/* Sage's face fills the circle; the crop's spare margin is trimmed by the scale */
+.avatar img { width: 100%; height: 100%; display: block; object-fit: contain; }
 .ai-body { flex: 1; min-width: 0; }
 .ai-head { display: flex; margin-bottom: 10px; }
 

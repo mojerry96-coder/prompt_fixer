@@ -31,9 +31,7 @@
   const DEMO_FIX = "Plan a 30-minute meeting for the Year 2 teaching team about exam timetables, as an agenda with timings.";
 
   const row = (tone, icon, b, t) => `<li><span class="ic ic-${tone}" aria-hidden="true"><i class="ph ${icon}"></i></span><b>${b}</b><span>${t}</span></li>`;
-  const avatar = () => document.querySelector(".topbar .brand")?.innerHTML.includes("<img")
-    ? `<span class="avatar" aria-hidden="true"><img src="assets/miva-mark.png" alt="" /></span>`
-    : `<span class="avatar" aria-hidden="true"><span class="mark-fp">FP</span></span>`;
+  const avatar = () => `<span class="avatar" aria-hidden="true"><img src="assets/cast/sage-avatar.png" alt="" /></span>`;
 
   const GENERIC_AGENDA = `
     <div class="reply">

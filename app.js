@@ -170,7 +170,7 @@
     } else if (item.kind === "ai") {
       el.className = "msg msg-ai" + (item.faded ? " faded" : "");
       el.innerHTML = `
-        <span class="avatar" aria-hidden="true"><img src="assets/miva-mark.png" alt="" /></span>
+        <span class="avatar" aria-hidden="true"><img src="assets/cast/sage-avatar.png" alt="" /></span>
         <div class="ai-body">
           ${item.tested ? `<div class="think-art">${window.Characters.clip("sage-think")}<p class="think-line" data-think>${anyOf(WORKING_FIRST)}</p></div>` : ""}
           ${item.tier ? `<div class="ai-head">${tierBadge(item.tier)}${item.note ? `<span class="ai-note">${item.note}</span>` : ""}</div>` : ""}

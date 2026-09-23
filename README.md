@@ -37,6 +37,7 @@ Progress is saved in the browser's `localStorage`, so a learner who reloads carr
 | `characters.js` | Inserts the character clips. |
 | `intro.js`, `intro.css` | The opener. |
 | `styles.css` | All other styles. |
+| `assets/cast/sage-avatar.png` | Sage's face, used as the assistant's avatar in the conversation. |
 | `assets/cast/` | Character clips: `.webm` (VP9 with alpha), `.mov` (HEVC with alpha, for Safari) and `.png` poster frames. |
 | `assets/vo/` | Walkthrough voiceover, `vo1`–`vo6`. |
 | `assets/logos/` | Partner logos used by the opener. |
