@@ -185,7 +185,7 @@
         el.classList.toggle("faded", !!item.faded);
       }
     });
-    if (!animate) { scrollToEnd(false); return Promise.resolve(); }
+    if (!animate) { hasStartedFixing() ? scrollToEnd(false) : scrollToStart(); return Promise.resolve(); }
 
     // Tested replies "think" first — the evaluation happens out of sight, then the result lands.
     const thinking = fresh.filter((f) => f.item.tested);
@@ -204,6 +204,13 @@
         resolve();
       }, reducedMotion ? 150 : 1900);
     });
+  }
+
+  const hasStartedFixing = () => state.attempts.length > 0 || !!state.cold;
+
+  function scrollToStart() {
+    const t = $("#thread");
+    requestAnimationFrame(() => t.scrollTo({ top: 0, behavior: "auto" }));
   }
 
   function scrollToEnd(smooth) {
@@ -469,6 +476,8 @@
   load();
   const resumed = state.stage !== "intro";
   syncThread(false);
+  // Clips and images settle after first paint and change the thread's height
+  if (hasStartedFixing()) window.addEventListener("load", () => scrollToEnd(false), { once: true });
   renderDock();
   save();
 
@@ -482,6 +491,7 @@
         await window.Walkthrough.run();
         await window.Walkthrough.loader(1300);
       }
+      if (!hasStartedFixing()) scrollToStart();
       const b = $("button, textarea", dock());
       if (b) b.focus({ preventScroll: true });
     },
