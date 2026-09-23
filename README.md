@@ -41,6 +41,20 @@ Progress is saved in the browser's `localStorage`, so a learner who reloads carr
 | `assets/vo/` | Walkthrough voiceover, `vo1`–`vo6`. |
 | `assets/logos/` | Partner logos used by the opener. |
 
+## Brand
+
+Colours, type treatment and the opener furniture follow the Miva Campus brand deck:
+
+| Token | Hex | Used for |
+| --- | --- | --- |
+| navy | `#09314F` | primary buttons, headings, the opener ground |
+| brown | `#472E00` | text on cream surfaces |
+| amber | `#EE9B01` | highlights: step labels, tries left, focus rings, the opener's action button |
+| gold | `#C6A32D` | secondary accents |
+| cream | `#FCEBCC` | the learner's own prompts and other light surfaces |
+
+Status colours (Weak, Getting there, Strong) sit outside the palette on purpose, so a result never reads as brand decoration. The opener echoes the deck cover: navy ground, the oversized chevron motif, "Study. Anywhere. Anyone. Anytime.", and a heading with one word in amber.
+
 ## Assets
 
 - **Characters:** Tade (lecturer), Sage (AI helper) and Kemi (fixer). The images were made with GPT Image 2.5 and animated with MiniMax H3 Max, both on Higgsfield. Each clip starts and ends on the same frame so it loops cleanly. `assets/cast/key.py` removes the white background and exports the transparent WebM, MOV and poster files. It reads the raw clips from `assets/cast/src/`, which is not in the repo.
